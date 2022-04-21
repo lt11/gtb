@@ -1,64 +1,70 @@
----
-title: "Ground Truth Builder"
-author: "Lorenzo Tattini"
-date: "20/04/2022"
-output: github_document
----
+Ground Truth Builder
+================
+Lorenzo Tattini
+20/04/2022
+
 ## Preamble and Definitions
 
-A ground truth is what we need to evaluate the performance of graph-based pipelines.
+A ground truth is what we need to evaluate the performance of
+graph-based pipelines.
 
 ## Dependencies
 
-- bcftools
-- bgzip (1.4)
-- tabix
-- mummer
-- data.table
+-   bcftools
+-   bgzip (1.4)
+-   tabix
+-   mummer
+-   data.table
 
 ## Quick Run
 
-This is a list of the things that must be edited to have a quick run working properly:
+This is a list of the things that must be edited to have a quick run
+working properly:
 
-- the name of the "run" folder (e.g. gt-1)
-- check all chunks with "eval = FALSE"
-- anything else?
+-   the name of the “run” folder (e.g. gt-1)
+-   check all chunks with “eval = FALSE”
+-   anything else?
 
 ## Brief Description of the Contents
 
 Given a set of assemblies, this markdown performs the following tasks:
 
-- running nucmer using any assembly against the reference genome
-- transforming the results in a vcf file
-- checking for loci which not genotyped because they bear the REF allele (rather than being actually missing because no alignment in that locus was found by nucmer)
+-   running nucmer using any assembly against the reference genome
+-   transforming the results in a vcf file
+-   checking for loci which not genotyped because they bear the REF
+    allele (rather than being actually missing because no alignment in
+    that locus was found by nucmer)
 
 ## TODOs
 
 Update bgzip!
 
-- yes, update bgzip
-- check if the "reverse alignments" behaviour of nucmer may cause problems
-- add a description of the folders
+-   yes, update bgzip
+-   check if the “reverse alignments” behaviour of nucmer may cause
+    problems
+-   add a description of the folders
 
 ### Folders Tree
 
-All folders are generated automatically, except "mrk" and "aux". The tree is:
+All folders are generated automatically, except “mrk” and “aux”. The
+tree is:
 
-- aux
-- genomes
-  + collinear
-  + rearranged
-  + reference
-- mrk
-- ms-vcf
-- nuc-aln
-- os-vcf
+-   aux
+-   genomes
+    -   collinear
+    -   rearranged
+    -   reference
+-   mrk
+-   ms-vcf
+-   nuc-aln
+-   os-vcf
 
 ## Analysis
 
-First, we need to merge the nuclear genome with mitochondrial genome. This chunk creates the input folder (genomes).
+First, we need to merge the nuclear genome with mitochondrial genome.
+This chunk creates the input folder (genomes).
 
-```{bash merges nuclear and MT genomes}
+``` bash
 ## settings -------------------------------------------------------------------
 
 ### strains selection
@@ -147,9 +153,13 @@ for ind_a in $(find . -name "*fa"); do
 done
 ```
 
-Here, we align the SGD genome against any other assembly. We only perform the direct alignment (compared to mulo-ydh's "double alignment and intersection" strategy). We do not want to reduce too much the number of variants called since this may lead to a high number of FP calls in the graph dataset.
+Here, we align the SGD genome against any other assembly. We only
+perform the direct alignment (compared to mulo-ydh’s “double alignment
+and intersection” strategy). We do not want to reduce too much the
+number of variants called since this may lead to a high number of FP
+calls in the graph dataset.
 
-```{bash runs the direct alignments with nucmer}
+``` bash
 ## settings -------------------------------------------------------------------
 
 ### base dir
@@ -252,9 +262,12 @@ for (( ind_i=0; ind_i<seq_dim; ind_i++ )); do
 done
 ```
 
-Now, we can filter for the SNPs and make a VCF file which will look similar to the pggb vcf file (e.g. "bin-AAA-hc.vcf"). The coordinates of assembly 2 (the query in nucmer's jargon) may be useful so we'll keep them in the vcf file.
+Now, we can filter for the SNPs and make a VCF file which will look
+similar to the pggb vcf file (e.g. “bin-AAA-hc.vcf”). The coordinates of
+assembly 2 (the query in nucmer’s jargon) may be useful so we’ll keep
+them in the vcf file.
 
-```{r makes the single-sample SNPs files}
+``` r
 ## header ---------------------------------------------------------------------
 
 rm(list = ls())
@@ -347,7 +360,7 @@ for (indF in allFiles) {
 
 Here, we make the multisample vcf file.
 
-```{bash makes the multisample file}
+``` bash
 ## settings -------------------------------------------------------------------
 
 ### threads
@@ -385,13 +398,14 @@ bgzip -bc "${dir_out}/multis.vcf.gz" | grep "^#" \
 > "${dir_out}/multis-genfix.vcf"
 ```
 
-Finally, we can check the missing genotypes. Warning: the alignment files (*coord.txt) may contain reverse alignments for which "start > end", e.g.: 
-2      765  |   230934   230165  |      764      770  |    87.99  | chrI chrI
+Finally, we can check the missing genotypes. Warning: the alignment
+files (\*coord.txt) may contain reverse alignments for which “start \>
+end”, e.g.: 2 765 \| 230934 230165 \| 764 770 \| 87.99 \| chrI chrI
 
-Obviously, they correspond to SNPs with the "reverse" tag:
-74      C       T       230857  2       74      1       0       1       -1      chrI    chrI
+Obviously, they correspond to SNPs with the “reverse” tag: 74 C T 230857
+2 74 1 0 1 -1 chrI chrI
 
-```{r searches for missing genotypes}
+``` r
 ## header ---------------------------------------------------------------------
 
 rm(list = ls())
@@ -425,6 +439,11 @@ indNonBiallelic <- grep(pattern = ",", x = dtInVcf$ALT)
 nNonBiallelic <- length(indNonBiallelic)
 cat("Found ", nNonBiallelic, " non-biallelic SNPs out of ", 
     nrow(dtInVcf), "\n", sep = "")
+```
+
+    ## Found 1343 non-biallelic SNPs out of 190291
+
+``` r
 dtBiallelicVcf <- dtInVcf[!indNonBiallelic]
 
 nColBiallelic <- ncol(dtBiallelicVcf)
@@ -479,13 +498,23 @@ for (indS in sampNames) {
   nCol <- which(colnames(dtBiallelicVcf) == indS)
   dtBiallelicVcf[indC[boAln], nCol] <- newTag
 }
+```
 
+    ## There are 107847 alleles to be checked for sample DBVPG6044-hc
+    ## There are 141602 alleles to be checked for sample DBVPG6765-hc
+    ## There are 188806 alleles to be checked for sample S288C-hc
+    ## There are 113113 alleles to be checked for sample SK1-hc
+    ## There are 111505 alleles to be checked for sample UWOPS034614-hc
+    ## There are 122361 alleles to be checked for sample Y12-hc
+    ## There are 120785 alleles to be checked for sample YPS128-hc
+
+``` r
 fwrite(x = dtBiallelicVcf, file = file.path(dirOut, fileOut), append = T,
        quote = F, sep = "\t", row.names = F, col.names = F)
 ```
 
-Here, we use RepeatMasker to make the bed files with easy and hard regions.
+Here, we use RepeatMasker to make the bed files with easy and hard
+regions.
 
-```{bash}
-
+``` bash
 ```
