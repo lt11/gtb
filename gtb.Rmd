@@ -10,44 +10,49 @@ A ground truth is what we need to evaluate the performance of graph-based pipeli
 
 ## Dependencies
 
-1. bcftools
-2. bgzip (1.4)
-3. tabix
-4. mummer
-5. data.table
+- bcftools
+- bgzip (1.4)
+- tabix
+- mummer
+- data.table
 
 ## Quick Run
 
-This is a list of the things that must be edited to have a quick run working properly:\
-- the name of the "run" folder (e.g. gt-1)\
-- check all chunks with "eval = FALSE"\
-- anything else?\
+This is a list of the things that must be edited to have a quick run working properly:
+
+- the name of the "run" folder (e.g. gt-1)
+- check all chunks with "eval = FALSE"
+- anything else?
 
 ## Brief Description of the Contents
 
-Given a set of assemblies, this markdown performs the following tasks:\
-1. running nucmer using any assembly against the reference genome\
-2. transforming the results in a vcf file\
-3. checking for loci which not genotyped because they bear the REF allele (rather than being actually missing because no alignment in that locus was found by nucmer)\
+Given a set of assemblies, this markdown performs the following tasks:
+
+- running nucmer using any assembly against the reference genome
+- transforming the results in a vcf file
+- checking for loci which not genotyped because they bear the REF allele (rather than being actually missing because no alignment in that locus was found by nucmer)
 
 ## TODOs
 
-1. check if the "reverse alignments" behaviour of nucmer may cause problems\
-2. update bgzip
+Update bgzip!
 
-### Fodlers Tree
+- yes, update bgzip
+- check if the "reverse alignments" behaviour of nucmer may cause problems
+- add a description of the folders
 
-All folders are generated automatically, except "mrk" and "aux".
+### Folders Tree
 
-aux
-genomes
-    collinear
-    rearranged
-    reference
-mrk
-ms-vcf
-nuc-aln
-os-vcf
+All folders are generated automatically, except "mrk" and "aux". The tree is:
+
+- aux
+- genomes
+  + collinear
+  + rearranged
+  + reference
+- mrk
+- ms-vcf
+- nuc-aln
+- os-vcf
 
 ## Analysis
 

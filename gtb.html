@@ -177,41 +177,56 @@ pre code {
 </div>
 <div id="dependencies" class="section level2">
 <h2>Dependencies</h2>
-<ol style="list-style-type: decimal">
+<ul>
 <li>bcftools</li>
 <li>bgzip (1.4)</li>
 <li>tabix</li>
 <li>mummer</li>
 <li>data.table</li>
-</ol>
+</ul>
 </div>
 <div id="quick-run" class="section level2">
 <h2>Quick Run</h2>
-<p>This is a list of the things that must be edited to have a quick run working properly:<br />
-- the name of the “run” folder (e.g. gt-1)<br />
-- check all chunks with “eval = FALSE”<br />
-- anything else?<br />
-</p>
+<p>This is a list of the things that must be edited to have a quick run working properly:</p>
+<ul>
+<li>the name of the “run” folder (e.g. gt-1)</li>
+<li>check all chunks with “eval = FALSE”</li>
+<li>anything else?</li>
+</ul>
 </div>
 <div id="brief-description-of-the-contents" class="section level2">
 <h2>Brief Description of the Contents</h2>
-<p>Given a set of assemblies, this markdown performs the following tasks:<br />
-1. running nucmer using any assembly against the reference genome<br />
-2. transforming the results in a vcf file<br />
-3. checking for loci which not genotyped because they bear the REF allele (rather than being actually missing because no alignment in that locus was found by nucmer)<br />
-</p>
+<p>Given a set of assemblies, this markdown performs the following tasks:</p>
+<ul>
+<li>running nucmer using any assembly against the reference genome</li>
+<li>transforming the results in a vcf file</li>
+<li>checking for loci which not genotyped because they bear the REF allele (rather than being actually missing because no alignment in that locus was found by nucmer)</li>
+</ul>
 </div>
 <div id="todos" class="section level2">
 <h2>TODOs</h2>
-<ol style="list-style-type: decimal">
-<li>check if the “reverse alignments” behaviour of nucmer may cause problems<br />
-</li>
-<li>update bgzip</li>
-</ol>
-<div id="fodlers-tree" class="section level3">
-<h3>Fodlers Tree</h3>
-<p>All folders are generated automatically, except “mrk” and “aux”.</p>
-<p>aux genomes collinear rearranged reference mrk ms-vcf nuc-aln os-vcf</p>
+<p>Update bgzip!</p>
+<ul>
+<li>yes, update bgzip</li>
+<li>check if the “reverse alignments” behaviour of nucmer may cause problems</li>
+<li>add a description of the folders</li>
+</ul>
+<div id="folders-tree" class="section level3">
+<h3>Folders Tree</h3>
+<p>All folders are generated automatically, except “mrk” and “aux”. The tree is:</p>
+<ul>
+<li>aux</li>
+<li>genomes
+<ul>
+<li>collinear</li>
+<li>rearranged</li>
+<li>reference</li>
+</ul></li>
+<li>mrk</li>
+<li>ms-vcf</li>
+<li>nuc-aln</li>
+<li>os-vcf</li>
+</ul>
 </div>
 </div>
 <div id="analysis" class="section level2">
